@@ -14,15 +14,10 @@ This is a mobile application built with Flutter that serves as a digital clothin
 
 📱 Cross-Platform: Built with Flutter for a native-like experience on both Android and iOS devices.
 
-📸 Screenshots
-Here's a quick look at the app in action.
-(Note: These are placeholder images. Replace them with actual screenshots of your application.)
+🌐 Live Demo
+You can try out the app and its features directly on the web at the link below.
 
-<div align="center">
-<img src="https://placehold.co/400x800/E8E8E8/4F4F4F?text=Main+Catalog" alt="Main Catalog Screen" width="200" style="margin-right: 10px;">
-<img src="https://placehold.co/400x800/E8E8E8/4F4F4F?text=Product+Details" alt="Product Details Screen" width="200" style="margin-right: 10px;">
-<img src="https://placehold.co/400x800/E8E8E8/4F4F4F?text=Wishlist" alt="Wishlist Screen" width="200">
-</div>
+https://little-house-clothing-catalog.web.app/
 
 🚀 Getting Started
 Follow these steps to get the project up and running on your local machine for development.
