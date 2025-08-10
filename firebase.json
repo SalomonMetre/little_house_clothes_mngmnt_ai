@@ -1,0 +1,36 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "little-house-clothing-catalog",
+          "appId": "1:900812141361:android:5e9dfdb06998a090c27610",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "little-house-clothing-catalog",
+          "configurations": {
+            "android": "1:900812141361:android:5e9dfdb06998a090c27610",
+            "ios": "1:900812141361:ios:0645edee35168e08c27610",
+            "macos": "1:900812141361:ios:0645edee35168e08c27610",
+            "web": "1:900812141361:web:001df2914c1c3a22c27610",
+            "windows": "1:900812141361:web:320fb71a63060b27c27610"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "us-central1"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "900812141361",
+    "project_id": "little-house-clothing-catalog",
+    "storage_bucket": "little-house-clothing-catalog.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:900812141361:android:5e9dfdb06998a090c27610",
+        "android_client_info": {
+          "package_name": "com.example.little_house_clothing_catalog"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbMcdLd3BcXhRK7D1bg01YPldNriEPOL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

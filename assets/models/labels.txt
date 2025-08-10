@@ -1,0 +1,12 @@
+0 abaca
+1 camel
+2 cotton
+3 denim
+4 fur
+5 leather
+6 nylon
+7 satin
+8 silk
+9 vinyl
+10 wool
+11 yak
