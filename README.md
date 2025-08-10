@@ -1,31 +1,31 @@
 🏡 Little House Clothing Catalog
-A smarter way to browse and organize your clothing collection.
+A smarter, AI-powered way to browse and organize clothing.
 💡 About the Project
-This is a mobile application built with Flutter that serves as a digital clothing catalog. What makes it unique is its integration with a FastAPI backend running a lightweight TFLite image classification model. This powerful system automatically categorizes clothes by their material type, providing a more efficient and precise browsing experience.
+This project is a cross-platform mobile app built with Flutter that re-imagines the traditional clothing catalog. Instead of simple browsing, it integrates with a FastAPI backend running a lightweight TFLite image classification model. This powerful combination automatically analyzes and categorizes clothes by their material type, providing a more precise and efficient shopping experience.
 
-✨ Features
-🤖 AI-Powered Material Classification: The app automatically identifies the material of a garment using a lightweight TFLite image classification model on a FastAPI backend.
+✨ Key Features
+🤖 AI-Powered Material Classification: Uses a TFLite model on a backend to automatically identify a garment's material.
 
-👕 Elegant Product Catalog: Browse a beautifully designed collection of clothing items with a smooth and responsive interface.
+👕 Elegant Product Catalog: A clean, responsive UI for browsing a curated collection of clothing items.
 
-🔍 Advanced Filtering: Easily filter and sort items by their material type, category, or other properties.
+🔍 Advanced Filtering: Easily filter and sort items based on their automatically detected material, category, and more.
 
-💖 Personalized Wishlist: Save your favorite items to a personalized wishlist for easy access and organization.
+💖 Personalized Wishlist: Users can save their favorite items to a personal wishlist for quick access.
 
-📱 Cross-Platform: Built with Flutter for a native-like experience on both Android and iOS devices.
+📱 Built for Mobile: A smooth, native-like experience on both Android and iOS devices.
 
 🌐 Live Demo
-You can try out the app and its features directly on the web at the link below.
+Experience the app and its features directly on the web:
 
 https://little-house-clothing-catalog.web.app/
 
 🚀 Getting Started
-Follow these steps to get the project up and running on your local machine for development.
+To get a local copy of this project up and running, follow these steps.
 
 Prerequisites
 Flutter SDK: Install Flutter
 
-A running FastAPI backend with the TFLite model, accessible from the app.
+A running FastAPI backend with the TFLite model, configured and accessible from your Flutter app.
 
 Installation
 Clone the repository:
@@ -41,23 +41,23 @@ Run the app:
 
 flutter run
 
-This will launch the app on your connected device or emulator.
+This command will launch the app on your connected device or emulator.
 
 📂 Project Structure
-A brief overview of the main folders and files:
+A clean overview of the project's folder hierarchy:
 
-.
-├── android/            # Android-specific files and settings
-├── ios/                # iOS-specific files and settings
-├── lib/                # All the Dart code for the application
-│   ├── main.dart       # The app's entry point
-│   ├── screens/        # UI for major pages (e.g., Catalog, Details)
-│   ├── widgets/        # Reusable UI components
-│   └── services/       # Code for API calls to the FastAPI backend
-└── pubspec.yaml        # Project dependencies and asset declarations
+little_house_clothing_catalog/
+├── android/
+├── ios/
+├── lib/
+│   ├── main.dart
+│   ├── screens/          # Major UI views (e.g., Catalog, ProductDetail)
+│   ├── widgets/          # Reusable UI components
+│   └── services/         # API clients and data fetching logic
+└── pubspec.yaml          # Project dependencies
 
 👋 Contributing
-We welcome contributions! If you have ideas for new features, bug fixes, or improvements, feel free to open an issue or submit a pull request.
+We welcome contributions! If you have suggestions for improvements or find a bug, please feel free to open an issue or submit a pull request.
 
 📝 License
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the LICENSE file for more details.
