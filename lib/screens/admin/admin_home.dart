@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -122,91 +123,105 @@ class _AdminHomeState extends ConsumerState<AdminHome>
   }
 
   Future<void> _classifyImageFile(File imageFile) async {
-  try {
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    final classificationApiUrl = remoteConfig.getString('classification_api_url');
-
-    // Read the file bytes directly
-    final imageBytes = await imageFile.readAsBytes();
-
-    var request = http.MultipartRequest('POST', Uri.parse(classificationApiUrl));
-    request.files.add(
-      // Use fromBytes instead of fromPath
-      http.MultipartFile.fromBytes('file', imageBytes, filename: 'image.png'),
-    );
-
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      final String predictedLabel = responseData['predicted_category'];
-      setState(() {
-        _predictedCategory = predictedLabel;
-        _selectedCategory = predictedLabel;
-      });
-      // Show snackbar with the predicted category
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Predicted category: $predictedLabel'),
-          duration: const Duration(seconds: 2),
-        ),
+    try {
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      final classificationApiUrl = remoteConfig.getString(
+        'classification_api_url',
       );
-    } else {
-      print('Classification API failed with status code: ${response.statusCode}');
+
+      // Read the file bytes directly
+      final imageBytes = await imageFile.readAsBytes();
+
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(classificationApiUrl),
+      );
+      request.files.add(
+        // Use fromBytes instead of fromPath
+        http.MultipartFile.fromBytes('file', imageBytes, filename: 'image.png'),
+      );
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final String predictedLabel = responseData['predicted_category'];
+        setState(() {
+          _predictedCategory = predictedLabel;
+          _selectedCategory = predictedLabel;
+        });
+        // Show snackbar with the predicted category
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Predicted category: $predictedLabel'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      } else {
+        print(
+          'Classification API failed with status code: ${response.statusCode}',
+        );
+        setState(() {
+          _predictedCategory = 'Failed to classify';
+          _selectedCategory = null;
+        });
+      }
+    } catch (e) {
+      print('An error occurred during classification: $e');
       setState(() {
-        _predictedCategory = 'Failed to classify';
+        _predictedCategory = 'Failed to classify due to an error';
         _selectedCategory = null;
       });
     }
-  } catch (e) {
-    print('An error occurred during classification: $e');
-    setState(() {
-      _predictedCategory = 'Failed to classify due to an error';
-      _selectedCategory = null;
-    });
   }
-}
 
-Future<void> _classifyImageWeb(Uint8List imageBytes) async {
-  try {
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    final classificationApiUrl = remoteConfig.getString('classification_api_url');
-    var request = http.MultipartRequest('POST', Uri.parse(classificationApiUrl));
-    request.files.add(
-      http.MultipartFile.fromBytes('file', imageBytes, filename: 'image.png'),
-    );
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      final String predictedLabel = responseData['predicted_category'];
-      setState(() {
-        _predictedCategory = predictedLabel;
-        _selectedCategory = predictedLabel;
-      });
-      // Show snackbar with the predicted category
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Predicted category: $predictedLabel'),
-          duration: const Duration(seconds: 2),
-        ),
+  Future<void> _classifyImageWeb(Uint8List imageBytes) async {
+    try {
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      final classificationApiUrl = remoteConfig.getString(
+        'classification_api_url',
       );
-    } else {
-      print('Classification API failed with status code: ${response.statusCode}');
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(classificationApiUrl),
+      );
+      request.files.add(
+        http.MultipartFile.fromBytes('file', imageBytes, filename: 'image.png'),
+      );
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final String predictedLabel = responseData['predicted_category'];
+        setState(() {
+          _predictedCategory = predictedLabel;
+          _selectedCategory = predictedLabel;
+        });
+        // Show snackbar with the predicted category
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Predicted category: $predictedLabel'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      } else {
+        print(
+          'Classification API failed with status code: ${response.statusCode}',
+        );
+        setState(() {
+          _predictedCategory = 'Failed to classify';
+          _selectedCategory = null;
+        });
+      }
+    } catch (e) {
+      print('An error occurred during classification: $e');
       setState(() {
-        _predictedCategory = 'Failed to classify';
+        _predictedCategory = 'Failed to classify due to an error';
         _selectedCategory = null;
       });
     }
-  } catch (e) {
-    print('An error occurred during classification: $e');
-    setState(() {
-      _predictedCategory = 'Failed to classify due to an error';
-      _selectedCategory = null;
-    });
   }
-}
 
   Future<void> _uploadItem() async {
     if (_uploadFormKey.currentState!.validate() &&
@@ -764,104 +779,111 @@ Future<void> _classifyImageWeb(Uint8List imageBytes) async {
   }
 
   Widget _buildClothesCRUDView() {
-  final clothesAsyncValue = ref.watch(clothesProvider);
+    final clothesAsyncValue = ref.watch(clothesProvider);
 
-  return clothesAsyncValue.when(
-    data: (clothes) {
-      return SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Clothes CRUD',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => _showAddClothDialog(context),
-              child: const Text('Add Cloth'),
-            ),
-            const SizedBox(height: 16),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: clothes.length,
-              itemBuilder: (context, index) {
-                final cloth = clothes[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Image on the left
-                        Container(
-                          width: 100,
-                          height: 100,
-                          margin: const EdgeInsets.only(right: 16.0),
-                          child: Image.network(
-                            cloth.imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.image_not_supported);
-                            },
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return const Center(child: CircularProgressIndicator());
-                            },
+    return clothesAsyncValue.when(
+      data: (clothes) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Clothes CRUD',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => _showAddClothDialog(context),
+                child: const Text('Add Cloth'),
+              ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: clothes.length,
+                itemBuilder: (context, index) {
+                  final cloth = clothes[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Image on the left
+                          Container(
+                            width: 100,
+                            height: 100,
+                            margin: const EdgeInsets.only(right: 16.0),
+                            child: Image.network(
+                              cloth.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.image_not_supported);
+                              },
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
+                            ),
                           ),
-                        ),
-                        // Details and buttons on the right
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Name: ${cloth.name}',
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                              ),
-                              const SizedBox(height: 4),
-                              Text('Category: ${cloth.category}'),
-                              const SizedBox(height: 4),
-                              Text('Quantity: ${cloth.quantity}'),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  TextButton(
-                                    onPressed: () => _showEditClothDialog(context, cloth),
-                                    child: const Text('Edit'),
+                          // Details and buttons on the right
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Name: ${cloth.name}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
-                                  const SizedBox(width: 8),
-                                  TextButton(
-                                    onPressed: () => _deleteCloth(cloth.id),
-                                    child: const Text(
-                                      'Delete',
-                                      style: TextStyle(color: Colors.red),
+                                ),
+                                const SizedBox(height: 4),
+                                Text('Category: ${cloth.category}'),
+                                const SizedBox(height: 4),
+                                Text('Quantity: ${cloth.quantity}'),
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          _showEditClothDialog(context, cloth),
+                                      child: const Text('Edit'),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                    const SizedBox(width: 8),
+                                    TextButton(
+                                      onPressed: () => _deleteCloth(cloth.id),
+                                      child: const Text(
+                                        'Delete',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      );
-    },
-    loading: () => const Center(child: CircularProgressIndicator()),
-    error: (e, st) => Center(child: Text('Error: $e')),
-  );
-}
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, st) => Center(child: Text('Error: $e')),
+    );
+  }
 
   void _showAddClothDialog(BuildContext context) {
     final nameController = TextEditingController();
@@ -898,6 +920,7 @@ Future<void> _classifyImageWeb(Uint8List imageBytes) async {
                 controller: quantityController,
                 decoration: const InputDecoration(labelText: 'Quantity'),
                 keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
             ],
           ),
@@ -968,6 +991,7 @@ Future<void> _classifyImageWeb(Uint8List imageBytes) async {
                 controller: quantityController,
                 decoration: const InputDecoration(labelText: 'Quantity'),
                 keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
             ],
           ),
