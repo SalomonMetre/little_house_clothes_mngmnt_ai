@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
 import 'dart:io';
 import 'dart:convert';
@@ -543,7 +543,7 @@ class _AdminHomeState extends ConsumerState<AdminHome>
     );
   }
 
-  //  visualization view
+  // Enhanced beautiful visualization view
   Widget _buildVisualizationView() {
     final clothesAsyncValue = ref.watch(clothesProvider);
     final requestsAsyncValue = ref.watch(requestsProvider);
@@ -564,217 +564,670 @@ class _AdminHomeState extends ConsumerState<AdminHome>
           }
         }
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  'Items by Category',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              SizedBox(
-                height: 350,
-                child: BarChart(
-                  BarChartData(
-                    barGroups: categoryCounts.entries.map((entry) {
-                      final index = _categories.indexOf(entry.key);
-                      return BarChartGroupData(
-                        x: index,
-                        barRods: [
-                          BarChartRodData(
-                            toY: entry.value.toDouble(),
-                            color: Colors.blueAccent,
-                            width: 20,
-                            borderRadius: BorderRadius.circular(4),
-                            rodStackItems: [
-                              BarChartRodStackItem(
-                                0,
-                                entry.value.toDouble(),
-                                Colors.blue,
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                    titlesData: FlTitlesData(
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 40,
-                          getTitlesWidget: (value, meta) {
-                            return Text(
-                              value.toInt().toString(),
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
-                              ),
-                            );
-                          },
-                        ),
+        // Beautiful gradient colors for categories
+        final List<Color> categoryColors = [
+          const Color(0xFF6C5CE7), // Purple
+          const Color(0xFF00B894), // Teal
+          const Color(0xFFE17055), // Orange
+          const Color(0xFF0984E3), // Blue
+          const Color(0xFFE84393), // Pink
+          const Color(0xFFFDCB6E), // Yellow
+          const Color(0xFF6C5CE7), // Purple (repeat for more categories)
+          const Color(0xFF00B894), // Teal (repeat)
+        ];
+
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.grey[50]!, Colors.grey[100]!],
+            ),
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Category Chart Card
+                Card(
+                  elevation: 8,
+                  shadowColor: Colors.black26,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Colors.white, Colors.grey[50]!],
                       ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) {
-                            final categoryIndex = value.toInt();
-                            if (categoryIndex >= 0 &&
-                                categoryIndex < _categories.length) {
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  _categories[categoryIndex],
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
+                    ),
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF6C5CE7).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.category,
+                                color: Color(0xFF6C5CE7),
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            const Text(
+                              'Items by Category',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF2D3748),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          height: 380,
+                          child: BarChart(
+                            BarChartData(
+                              barGroups: categoryCounts.entries.map((entry) {
+                                final index = _categories.indexOf(entry.key);
+                                final color =
+                                    categoryColors[index %
+                                        categoryColors.length];
+
+                                return BarChartGroupData(
+                                  x: index,
+                                  barRods: [
+                                    BarChartRodData(
+                                      toY: entry.value.toDouble(),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                        colors: [color.withOpacity(0.7), color],
+                                      ),
+                                      width: 32,
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(8),
+                                        topRight: Radius.circular(8),
+                                      ),
+                                      backDrawRodData:
+                                          BackgroundBarChartRodData(
+                                            show: true,
+                                            toY:
+                                                (categoryCounts.values.isEmpty
+                                                    ? 0
+                                                    : categoryCounts.values
+                                                          .reduce(
+                                                            (a, b) =>
+                                                                a > b ? a : b,
+                                                          )) *
+                                                1.1,
+                                            color: Colors.grey[100],
+                                          ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                              titlesData: FlTitlesData(
+                                leftTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 50,
+                                    getTitlesWidget: (value, meta) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 8.0,
+                                        ),
+                                        child: Text(
+                                          value.toInt().toString(),
+                                          style: const TextStyle(
+                                            color: Color(0xFF718096),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
-                              );
-                            }
-                            return const Text('');
-                          },
-                          reservedSize: 40,
-                        ),
-                      ),
-                      topTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      rightTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                    ),
-                    gridData: FlGridData(show: true),
-                    borderData: FlBorderData(show: true),
-                    barTouchData: BarTouchData(
-                      touchTooltipData: BarTouchTooltipData(
-                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                          final category = _categories[group.x.toInt()];
-                          return BarTooltipItem(
-                            '$category\n',
-                            const TextStyle(color: Colors.white),
-                            children: [
-                              TextSpan(
-                                text: 'Count: ${rod.toY}',
-                                style: const TextStyle(color: Colors.white),
+                                bottomTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    getTitlesWidget: (value, meta) {
+                                      final categoryIndex = value.toInt();
+                                      if (categoryIndex >= 0 &&
+                                          categoryIndex < _categories.length) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 12.0,
+                                          ),
+                                          child: Text(
+                                            _categories[categoryIndex],
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xFF4A5568),
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        );
+                                      }
+                                      return const Text('');
+                                    },
+                                    reservedSize: 50,
+                                  ),
+                                ),
+                                topTitles: const AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false),
+                                ),
+                                rightTitles: const AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false),
+                                ),
                               ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 32),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  'Requests Over Time',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              SizedBox(
-                height: 350,
-                child: LineChart(
-                  LineChartData(
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: requestsPerDay.entries
-                            .map(
-                              (entry) => FlSpot(
-                                entry.key.toDouble(),
-                                entry.value.toDouble(),
+                              gridData: FlGridData(
+                                show: true,
+                                drawVerticalLine: false,
+                                horizontalInterval: 1,
+                                getDrawingHorizontalLine: (value) {
+                                  return FlLine(
+                                    color: Colors.grey[200]!,
+                                    strokeWidth: 1,
+                                  );
+                                },
                               ),
-                            )
-                            .toList(),
-                        isCurved: true,
-                        color: Colors.green,
-                        barWidth: 4,
-                        belowBarData: BarAreaData(show: false),
-                        dotData: FlDotData(
-                          show: true,
-                          getDotPainter: (spot, xPercentage, bar, index) =>
-                              FlDotCirclePainter(
-                                radius: 5,
-                                color: Colors.green,
-                                strokeWidth: 2,
-                                strokeColor: Colors.white,
+                              borderData: FlBorderData(
+                                show: true,
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.grey[300]!,
+                                    width: 1,
+                                  ),
+                                  left: BorderSide(
+                                    color: Colors.grey[300]!,
+                                    width: 1,
+                                  ),
+                                ),
                               ),
-                        ),
-                      ),
-                    ],
-                    titlesData: FlTitlesData(
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 40,
-                          getTitlesWidget: (value, meta) {
-                            return Text(
-                              value.toInt().toString(),
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
+                              barTouchData: BarTouchData(
+                                enabled: true,
+                                touchTooltipData: BarTouchTooltipData(
+                                  getTooltipColor: (group) =>
+                                      const Color(0xFF2D3748),
+                                  tooltipPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  getTooltipItem:
+                                      (group, groupIndex, rod, rodIndex) {
+                                        final category =
+                                            _categories[group.x.toInt()];
+                                        return BarTooltipItem(
+                                          '$category\n',
+                                          const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: 'Items: ${rod.toY.toInt()}',
+                                              style: const TextStyle(
+                                                color: Colors.white70,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                ),
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) => Text(
-                            'Day ${value.toInt()}',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
                             ),
                           ),
                         ),
-                      ),
-                      topTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      rightTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                    ),
-                    gridData: FlGridData(show: true),
-                    borderData: FlBorderData(show: true),
-                    lineTouchData: LineTouchData(
-                      touchTooltipData: LineTouchTooltipData(
-                        getTooltipItems: (touchedSpots) {
-                          return touchedSpots.map((LineBarSpot touchedSpot) {
-                            final day = touchedSpot.x.toInt();
-                            final requests = touchedSpot.y.toInt();
-                            return LineTooltipItem(
-                              'Day $day\n',
-                              const TextStyle(color: Colors.white),
-                              children: [
-                                TextSpan(
-                                  text: 'Requests: $requests',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            );
-                          }).toList();
-                        },
-                      ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 32),
+
+                // Requests Over Time Chart Card
+                Card(
+                  elevation: 8,
+                  shadowColor: Colors.black26,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Colors.white, Colors.grey[50]!],
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF00B894).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.trending_up,
+                                color: Color(0xFF00B894),
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            const Text(
+                              'Requests Over Time',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF2D3748),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          height: 380,
+                          child: LineChart(
+                            LineChartData(
+                              lineBarsData: [
+                                LineChartBarData(
+                                  spots: requestsPerDay.entries
+                                      .map(
+                                        (entry) => FlSpot(
+                                          entry.key.toDouble(),
+                                          entry.value.toDouble(),
+                                        ),
+                                      )
+                                      .toList(),
+                                  isCurved: true,
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFF00B894),
+                                      Color(0xFF00CEC9),
+                                    ],
+                                  ),
+                                  barWidth: 4,
+                                  belowBarData: BarAreaData(
+                                    show: true,
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        const Color(
+                                          0xFF00B894,
+                                        ).withOpacity(0.3),
+                                        const Color(
+                                          0xFF00CEC9,
+                                        ).withOpacity(0.1),
+                                      ],
+                                    ),
+                                  ),
+                                  dotData: FlDotData(
+                                    show: true,
+                                    getDotPainter:
+                                        (spot, xPercentage, bar, index) =>
+                                            FlDotCirclePainter(
+                                              radius: 6,
+                                              color: Colors.white,
+                                              strokeWidth: 3,
+                                              strokeColor: const Color(
+                                                0xFF00B894,
+                                              ),
+                                            ),
+                                  ),
+                                  isStrokeCapRound: true,
+                                  preventCurveOverShooting: true,
+                                ),
+                              ],
+                              titlesData: FlTitlesData(
+                                leftTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    reservedSize: 50,
+                                    getTitlesWidget: (value, meta) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 8.0,
+                                        ),
+                                        child: Text(
+                                          value.toInt().toString(),
+                                          style: const TextStyle(
+                                            color: Color(0xFF718096),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                bottomTitles: AxisTitles(
+                                  sideTitles: SideTitles(
+                                    showTitles: true,
+                                    getTitlesWidget: (value, meta) => Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        'Day ${value.toInt()}',
+                                        style: const TextStyle(
+                                          color: Color(0xFF4A5568),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    reservedSize: 40,
+                                  ),
+                                ),
+                                topTitles: const AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false),
+                                ),
+                                rightTitles: const AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false),
+                                ),
+                              ),
+                              gridData: FlGridData(
+                                show: true,
+                                drawVerticalLine: true,
+                                horizontalInterval: 1,
+                                verticalInterval: 1,
+                                getDrawingHorizontalLine: (value) {
+                                  return FlLine(
+                                    color: Colors.grey[200]!,
+                                    strokeWidth: 1,
+                                    dashArray: [5, 5],
+                                  );
+                                },
+                                getDrawingVerticalLine: (value) {
+                                  return FlLine(
+                                    color: Colors.grey[200]!,
+                                    strokeWidth: 1,
+                                    dashArray: [5, 5],
+                                  );
+                                },
+                              ),
+                              borderData: FlBorderData(
+                                show: true,
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.grey[300]!,
+                                    width: 1,
+                                  ),
+                                  left: BorderSide(
+                                    color: Colors.grey[300]!,
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
+                              lineTouchData: LineTouchData(
+                                enabled: true,
+                                touchTooltipData: LineTouchTooltipData(
+                                  getTooltipColor: (touchedSpot) =>
+                                      const Color(0xFF2D3748),
+                                  tooltipPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  getTooltipItems: (touchedSpots) {
+                                    return touchedSpots.map((
+                                      LineBarSpot touchedSpot,
+                                    ) {
+                                      final day = touchedSpot.x.toInt();
+                                      final requests = touchedSpot.y.toInt();
+                                      return LineTooltipItem(
+                                        'Day $day\n',
+                                        const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                            text: 'Requests: $requests',
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }).toList();
+                                  },
+                                ),
+                                touchCallback:
+                                    (
+                                      FlTouchEvent event,
+                                      LineTouchResponse? touchResponse,
+                                    ) {
+                                      // Add haptic feedback on touch
+                                      if (event is FlTapUpEvent &&
+                                          touchResponse
+                                                  ?.lineBarSpots
+                                                  ?.isNotEmpty ==
+                                              true) {
+                                        HapticFeedback.lightImpact();
+                                      }
+                                    },
+                              ),
+                              minX: requestsPerDay.keys.isEmpty
+                                  ? 0
+                                  : requestsPerDay.keys
+                                        .reduce((a, b) => a < b ? a : b)
+                                        .toDouble(),
+                              maxX: requestsPerDay.keys.isEmpty
+                                  ? 31
+                                  : requestsPerDay.keys
+                                        .reduce((a, b) => a > b ? a : b)
+                                        .toDouble(),
+                              minY: 0,
+                              maxY: requestsPerDay.values.isEmpty
+                                  ? 10
+                                  : (requestsPerDay.values.reduce(
+                                              (a, b) => a > b ? a : b,
+                                            ) *
+                                            1.2)
+                                        .toDouble(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Summary Statistics Card
+                Card(
+                  elevation: 8,
+                  shadowColor: Colors.black26,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Colors.white, Colors.grey[50]!],
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Summary Statistics',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF2D3748),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildStatCard(
+                                'Total Items',
+                                categoryCounts.values
+                                    .fold(0, (sum, count) => sum + count)
+                                    .toString(),
+                                Icons.inventory_2,
+                                const Color(0xFF6C5CE7),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: _buildStatCard(
+                                'Categories',
+                                categoryCounts.length.toString(),
+                                Icons.category,
+                                const Color(0xFF00B894),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: _buildStatCard(
+                                'Total Requests',
+                                requestsPerDay.values
+                                    .fold(0, (sum, count) => sum + count)
+                                    .toString(),
+                                Icons.analytics,
+                                const Color(0xFFE17055),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error: $e')),
+      loading: () => SizedBox(
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  const Color(0xFF6C5CE7),
+                ),
+                strokeWidth: 3,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Loading visualizations...',
+                style: TextStyle(color: Color(0xFF718096), fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      ),
+      error: (e, st) => Center(
+        child: Card(
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: Colors.redAccent,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Error loading data',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  e.toString(),
+                  style: TextStyle(color: Colors.grey[600]),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Helper method for summary stat cards
+  Widget _buildStatCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.2), width: 1),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, size: 24, color: color),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF718096),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 
